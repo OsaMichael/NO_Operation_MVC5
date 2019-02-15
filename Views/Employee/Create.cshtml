@@ -1,0 +1,221 @@
+﻿@model NoOperation_MVC.Models.Employee
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create</h2>
+
+<hr />
+<div class="card-body" id="bar-parent">
+    <form action="Create" method="Post" id="form_sample_1" class="form-horizontal" novalidate="novalidate">
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-body">
+
+            <div class="form-group row">
+                <label class="control-label col-md-3">
+                    FirstName
+                    <span class="required" aria-required="true"> * </span>
+                </label>
+                <div class="col-md-5">
+                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control input-height", placeholder = "enter restaurant name" })
+                    @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label class="control-label col-md-3">
+                    LastName
+                    <span class="required" aria-required="true"> * </span>
+                </label>
+                <div class="col-md-5">
+                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control input-height", placeholder = "enter restaurant name" })
+                    @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="control-label col-md-3">
+                    Email
+                    <span class="required" aria-required="true"> * </span>
+                </label>
+                <div class="col-md-5">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control input-height", placeholder = "enter restaurant name" })
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-md-3">
+                    Address
+                    <span class="required" aria-required="true"> * </span>
+                </label>
+                <div class="col-md-5">
+                    @Html.TextBoxFor(m => m.Address, new { @class = "form-control input-height", placeholder = "enter restaurant name" })
+                    @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="control-label col-md-3">
+                    State
+                    @*<span class="required" aria-required="true"> * </span>*@
+                </label>
+                <div class="col-md-5">
+                    @Html.DropDownListFor(m => m.StateId, (IEnumerable<SelectListItem>)ViewBag.states, "select state", new { @class = "form-control", @placeholder = "select state", required = "required"})
+
+                    @Html.ValidationMessageFor(m => m.StateId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="control-label col-md-3">
+                    LGA
+                    @*<span class="required" aria-required="true"> * </span>*@
+                </label>
+                <div class="col-md-5">
+                    @Html.DropDownListFor(m => m.LGAId, new List<SelectListItem>(), "select lga", new { @class = "form-control", @placeholder = "select lga", required = "required", id = "Lga" })
+
+                    @Html.ValidationMessageFor(m => m.LGAId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <div class="row">
+                    <div class="offset-md-3 col-md-6 pull-right">
+                        <button type="submit" class="btn btn-info" id="submitData">Save</button>
+                        <button type="button" class="btn btn-danger">Cancel</button>
+
+                    </div>
+                    <div class=" col-md-1">
+                        <a href="@Url.Action("Index","Employee", new { area = ""})" class="btn btn-chatpane">Back To List(s)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+    @*@section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }*@
+
+<script type="text/javascript">
+
+
+    $(function () {
+        $(document).on('click', '#submitData', function (e) {
+            //$("html").addClass("loading");
+        });
+    });
+
+    $(function () {
+        $('#StateId').on('change', function () {
+
+            //alert("Good");
+            var id, url, select;
+
+            url = '@Url.Action("GetLGAByStateId")';
+            select = $('#Lga');
+            id = $('#StateId').val();
+
+            //alert("Good");
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: { id: id },
+                success: function (response) {
+                  
+                    if (response.ok) {
+                        //empty the combo
+                        select.empty();
+                        //alert("Good");
+                        //fill again
+                        var oSelect = "Select LGA";
+                        select.append($('<option></option>').val("").html(oSelect));
+                        //alert(response.data);
+                        $.each(response.data, function (index, itemdata) {
+                            select.append($('<option></option>').val(itemdata.LGAId).html(itemdata.LGAName));
+                        });
+                        select.show('slow');
+                    }
+                    else {
+                        window.alert(' error : ' + response.message);
+                    }
+                }
+            });
+        });
+    });
+
+
+
+
+    @*$('#State').change(function (){
+
+        var selectedState = $("#State").val();
+        var lgaSelect = $('#Lga');
+
+        lgaSelect.empty();
+
+        if (selectedState != null && selectedState != '') {
+
+            $.getJSON('@Url.Action("GetLGAByStateId")', { id: selectedState }, function (lgas) {
+
+                if (lgas != null && !jQuery.isEmptyObject(lgas))
+                {  
+
+                    lgaSelect.append($('<option/>', {
+                        value: null,
+                        text: ""
+                    }));
+        
+                    $.each(lgas, function (index, lga) {
+                        lgaSelect.append($('<option/>', {
+                            value: lga.Value,
+                            text: lga.Text
+                        }));
+                    });
+                };
+            });
+        }
+    });*@
+</script>
+ @*}*@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*<script type="text/javascript">
+    $(document).ready(function () {
+
+
+    $("#state").change(function () {
+        $("#lga").find("option:gt(0)").remove();
+        $("#lga").find("option:first").text("Loading...");
+        $.getJSON("/get/cities", {
+            state_id: $(this).val()
+        }, function (json) {
+            $("#city").find("option:first").text("");
+            for (var i = 0; i < json.length; i++) {
+                $("<option/>").attr("value", json[i].id).text(json[i].name).appendTo($("#city"));
+            }
+        });
+    });
+    });
+</script>*@

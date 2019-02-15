@@ -1,0 +1,41 @@
+﻿@model IEnumerable<NoOperation_MVC.Models.LGA>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.LGAName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StateId)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.LGAName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.StateId)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.LGAId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.LGAId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.LGAId })
+        </td>
+    </tr>
+}
+
+</table>
